@@ -3,6 +3,8 @@
 </template>
 
 <script lang="ts">
+import { Bar } from "vue-chartjs";
+import { defineComponent } from "vue";
 import {
   Chart as ChartJS,
   Title,
@@ -12,7 +14,6 @@ import {
   CategoryScale,
   LinearScale,
 } from "chart.js";
-import { Bar } from "vue-chartjs";
 
 ChartJS.register(
   CategoryScale,
@@ -23,12 +24,28 @@ ChartJS.register(
   Legend
 );
 
-export default {
+interface ItemList {
+  label: any;
+  dataset: any;
+}
+
+interface ChartData {
+  labels: any;
+  datasets: any;
+}
+
+export default defineComponent({
   name: "ChartColumnCommon",
   components: {
     Bar,
   },
-  data() {
+  props: {
+    chartList: {
+      type: Array as () => Array<ItemList>,
+      required: true,
+    },
+  },
+  data(): { data: ChartData; options: { responsive: boolean } } {
     return {
       data: {
         labels: ["January", "February", "March"],
@@ -39,5 +56,22 @@ export default {
       },
     };
   },
-};
+  watch: {
+    chartList: {
+      handler(newList) {
+        // Update labels and datasets when chartList changes
+        this.data.labels = newList.map((item: ItemList) => item.label);
+        this.data.datasets[0].data = newList.map(
+          (item: ItemList) => item.dataset
+        );
+
+        // Log updated data to console (optional)
+        console.log(this.data.labels);
+        console.log(this.data.datasets);
+      },
+      immediate: true,
+    },
+  },
+  methods: {},
+});
 </script>
