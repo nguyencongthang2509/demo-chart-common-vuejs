@@ -26,8 +26,10 @@ import {
   LinearScale,
   ChartOptions,
 } from "chart.js";
+import ChartJSPluginDatalabels from "chartjs-plugin-datalabels";
 
 ChartJS.register(
+  ChartJSPluginDatalabels,
   CategoryScale,
   LinearScale,
   BarElement,
@@ -37,13 +39,13 @@ ChartJS.register(
 );
 
 interface ItemList {
-  label: any;
-  dataset: any;
+  label?: any;
+  dataset?: any;
 }
 
 interface ChartData {
-  labels: any;
-  datasets: any;
+  labels?: any;
+  datasets?: any;
 }
 
 interface StyleList {
@@ -74,10 +76,6 @@ export default defineComponent({
       type: Array as () => Array<String>,
       required: true,
     },
-    listColorData: {
-      type: Array as () => Array<String>,
-      required: true,
-    },
   },
   data(): {
     data: ChartData;
@@ -90,7 +88,6 @@ export default defineComponent({
       backgroundColor: "",
       data: [],
     }));
-
     return {
       data: {
         labels: [],
@@ -111,6 +108,21 @@ export default defineComponent({
             title: {
               display: true,
               text: this.noteY,
+            },
+          },
+        },
+        plugins: {
+          datalabels: {
+            display: true,
+            color: "black",
+            anchor: "center",
+            align: "center",
+            font: {
+              weight: "bold",
+            },
+            formatter: (value, context) => {
+              console.log(value);
+              return value;
             },
           },
         },
@@ -135,22 +147,8 @@ export default defineComponent({
     listLabelData: {
       handler(newList) {
         const numLabels = Math.min(newList.length, this.data.datasets.length);
-
         for (let i = 0; i < numLabels; i++) {
           this.data.datasets[i].label = newList[i];
-        }
-      },
-      immediate: true,
-    },
-    listColorData: {
-      handler(newList) {
-        const numBackgroundColors = Math.min(
-          newList.length,
-          this.data.datasets.length
-        );
-
-        for (let i = 0; i < numBackgroundColors; i++) {
-          this.data.datasets[i].backgroundColor = newList[i];
         }
       },
       immediate: true,
@@ -162,7 +160,38 @@ export default defineComponent({
     }
     this.stylesCommon = this.styles;
   },
-  methods: {},
+  methods: {
+    getRandomColor(): string {
+      let letters = "0123456789ABCDEF";
+      let color = "#";
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      if (/^#(FFF|FDF|F0F|EDE|DDD|DFD|FEF)$/.test(color)) {
+        color = this.getRandomColor();
+      }
+      return color;
+    },
+    generateRandomColors() {
+      let listColorData: Array<string> = [];
+
+      this.listLabelData.forEach(() => {
+        let value = this.getRandomColor();
+        listColorData.push(value);
+      });
+
+      const numBackgroundColors = Math.min(
+        listColorData.length,
+        this.data.datasets.length
+      );
+      for (let i = 0; i < numBackgroundColors; i++) {
+        this.data.datasets[i].backgroundColor = listColorData[i];
+      }
+    },
+  },
+  beforeMount() {
+    this.generateRandomColors();
+  },
 });
 </script>
 
