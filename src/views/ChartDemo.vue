@@ -46,17 +46,17 @@ export default defineComponent({
         },
         {
           label: "Nguyễn Quốc Huy",
-          dataset: [10, 6, 5],
+          dataset: [3, 7, 3],
         },
         {
           label: "Nguyễn Quốc Huy",
-          dataset: [10, 6, 5],
+          dataset: [9, 6, 5],
         },
       ],
       title: "Biểu đồ điểm toán và hóa của học sinh",
       styles: {
         width: "75%",
-        height: "150px",
+        height: "140px",
       },
       noteX: "Họ và tên học sinh",
       noteY: "Điểm (Đ)",

@@ -119,9 +119,9 @@ export default defineComponent({
             align: "center",
             font: {
               weight: "bold",
+              size: 14,
             },
             formatter: (value, context) => {
-              console.log(value);
               return value;
             },
           },
