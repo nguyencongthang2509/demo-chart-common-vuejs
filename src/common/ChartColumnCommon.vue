@@ -16,6 +16,7 @@
 <script lang="ts">
 import { Bar } from "vue-chartjs";
 import { defineComponent } from "vue";
+import { arrayColor } from "../constant/constants";
 import {
   Chart as ChartJS,
   Title,
@@ -76,6 +77,7 @@ export default defineComponent({
       type: Array as () => Array<String>,
       required: true,
     },
+    notePostion: String,
   },
   data(): {
     data: ChartData;
@@ -95,6 +97,7 @@ export default defineComponent({
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         scales: {
           x: {
             stacked: true,
@@ -102,12 +105,18 @@ export default defineComponent({
               display: true,
               text: this.noteX,
             },
+            grid: {
+              display: false,
+            },
           },
           y: {
             stacked: true,
             title: {
               display: true,
               text: this.noteY,
+            },
+            grid: {
+              display: false,
             },
           },
         },
@@ -124,6 +133,10 @@ export default defineComponent({
             formatter: (value, context) => {
               return value;
             },
+          },
+          legend: {
+            display: true,
+            position: this.notePostion,
           },
         },
       } as ChartOptions,
@@ -161,22 +174,11 @@ export default defineComponent({
     this.stylesCommon = this.styles;
   },
   methods: {
-    getRandomColor(): string {
-      let letters = "0123456789ABCDEF";
-      let color = "#";
-      for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-      }
-      if (/^#(FFF|FDF|F0F|EDE|DDD|DFD|FEF)$/.test(color)) {
-        color = this.getRandomColor();
-      }
-      return color;
-    },
-    generateRandomColors() {
+    generateColors() {
       let listColorData: Array<string> = [];
 
-      this.listLabelData.forEach(() => {
-        let value = this.getRandomColor();
+      this.listLabelData.forEach((item, index) => {
+        let value = arrayColor[index % arrayColor.length];
         listColorData.push(value);
       });
 
@@ -190,7 +192,7 @@ export default defineComponent({
     },
   },
   beforeMount() {
-    this.generateRandomColors();
+    this.generateColors();
   },
 });
 </script>
